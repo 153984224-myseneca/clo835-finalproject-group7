@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Employee Information</title>
+</head>
+<body style="background-image: url('{{ url_for('static', filename='background.jpg') }}'); background-size: cover;">
+<center>
+	<font color="black" size="5" style="font-family: avenir">
+		<h1 style="color: DodgerBlue">Employee Information</h1>
+		<div>
+	  		Employee ID:<br> {{ id }} <br><br>
+	  		First Name:<br> {{ fname }} <br><br>
+	  		Last Name:<br> {{ lname }} <br><br>
+	  		Primary Interest:<br> {{ interest }} <br><br>
+	  		Location:<br> {{ location }} <br><br>
+	  	</div>
+		<a href="{{ url_for('home') }}">Back</a>
+	</font>
+</center>
+</body>
+</html>
