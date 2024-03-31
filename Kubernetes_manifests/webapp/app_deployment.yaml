@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: group7-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: group7-app
+  template:
+    metadata:
+      labels:
+        app: group7-app
+    spec:
+      containers:
+      - name: group7-webapp
+        image: 128140924817.dkr.ecr.us-east-1.amazonaws.com/project:web_app
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: BACKGROUND_IMAGE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: background_image_url
+        - name: GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: group_name
+        - name: SLOGAN
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: slogan
+        - name: DBHOST
+          value: "mysql-service"
+        - name: DBPORT
+          value: "3306"
+        - name: DBUSER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: DBPWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: DATABASE
+          value: "employees"
+      imagePullSecrets:
+      - name: ecr-secret
+
