@@ -35,6 +35,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        BD_PASSWORD: ${{ secrets.DB_PASSWORD }}
         AWS_REGION: us-east-1
 
     - name: Build, test, tag, and push MySQL image to Amazon ECR
@@ -51,7 +52,7 @@ jobs:
         # Docker build for mysql server
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}" -f Dockerfile_mysql .
         # Unit test
-        docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=pw -d $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
+        docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=$BD_PASSWORD -d $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
         docker ps
         echo "Pause for 10 seconds to let container start"
         sleep 10
