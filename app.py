@@ -19,6 +19,7 @@ SLOGAN = os.environ.get('SLOGAN') or ""
 IMAGEURL = os.environ.get('BACKGROUND_IMAGE_URL') or ""
 BUCKET = os.environ.get('BUCKET_NAME') or ""
 FILE = os.environ.get('FILE_NAME') or ""
+IMAGE_PATH = os.environ.get('IMAGE_PATH') or ""
 
 # AWS credentails
 ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID') or ""
@@ -54,14 +55,6 @@ SUPPORTED_COLORS = ",".join(color_codes.keys())
 # Generate a random color
 COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lime"])
 
-# Generate HTML for background
-# def getBackgound(image_path, color):
-#     if image_path != "":
-#         background = f"background-image: url({image_path}); background-size: cover;"
-#     else:
-#         background = f"background-color: {color};"
-#     return background
-
 def checkFileExists(filepath):
     if os.path.exists(filepath):
         return True
@@ -69,8 +62,15 @@ def checkFileExists(filepath):
         return False
 
 def getBackground():
+    if IMAGE_PATH != "":
+        print(IMAGE_PATH)
+        if checkFileExists(IMAGE_PATH):
+            return f"background-image: url({IMAGE_PATH}); background-size: cover;"
+        else:
+            color = color_codes[COLOR]
+            return f"background-color: {color};"
+    
     path = f"static/background.jpg"
-    color = color_codes[COLOR]
     # Check local background image exsits 
     if checkFileExists(path):
         return f"background-image: url({path}); background-size: cover;"
