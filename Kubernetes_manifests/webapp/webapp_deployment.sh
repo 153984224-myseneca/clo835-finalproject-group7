@@ -1,6 +1,7 @@
 #!/bin/env bash
-# For deployment of web_app deployment in EKS cluster for project2
+# For deployment of Webapp in EKS cluster for Project2
 # Author: Caleb U. Okon
+# Credit: Zhiwei (Jon) Zeng
 # Date: 2024.04.06
 
 read -p "Please input a namespace name: " NAMESPACE 
