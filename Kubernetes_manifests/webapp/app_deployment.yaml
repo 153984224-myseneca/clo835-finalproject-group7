@@ -12,6 +12,7 @@ spec:
       labels:
         app: group7-app
     spec:
+      serviceAccountName: clo835
       containers:
       - name: group7-webapp
         image: 128140924817.dkr.ecr.us-east-1.amazonaws.com/project:web_app

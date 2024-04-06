@@ -12,6 +12,7 @@ spec:
       labels:
         app: my-db
     spec:
+      serviceAccountName: clo835
       containers:
       - name: mysql
         image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:mysql-20240330142721
