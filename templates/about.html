@@ -3,7 +3,7 @@
 <head>
     <title>Hello from Flask</title>
 </head>
-<body style="background-image: url('{{ url_for('static', filename='background.jpg') }}'); background-size: cover;">
+<body style="{{ background }}">
     <div style="color: #e4e4e4; text-align: center; vertical-align: middle;">
         {% if name %}
             <h1>Hello from {{ name }}!</h1>

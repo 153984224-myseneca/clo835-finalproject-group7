@@ -3,10 +3,13 @@
 <head>
     <title>Add Employee Information</title>
 </head>
-<body style="background-image: url('{{ url_for('static', filename='background.jpg') }}'); background-size: cover;">
+<body style="{{ background }}">
     <center>
         <font color="black" size="4" style="font-family: avenir">
-            <h1 style="color: DodgerBlue">Employee Database</h1>
+            <header>
+                <h1 style="color: DodgerBlue">Employee Database</h1>
+                <h2 style="color: WhiteSmoke">{{ group_name }} - {{ slogan }}</h2>
+            </header>
             <form action="/addemp" autocomplete="on" method="POST" enctype="multipart/form-data">
 
 			

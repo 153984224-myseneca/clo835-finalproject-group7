@@ -3,7 +3,7 @@ from pymysql import connections
 import os
 import random
 import argparse
-
+import boto3
 
 app = Flask(__name__)
 
@@ -14,6 +14,17 @@ DATABASE = os.environ.get("DATABASE") or "employees"
 COLOR_FROM_ENV = os.environ.get('APP_COLOR') or "lime"
 DBPORT = int(os.environ.get("DBPORT"))
 
+GROUP = os.environ.get('GROUP_NAME') or ""
+SLOGAN = os.environ.get('SLOGAN') or ""
+IMAGEURL = os.environ.get('BACKGROUND_IMAGE_URL') or ""
+BUCKET = os.environ.get('BUCKET_NAME') or ""
+FILE = os.environ.get('FILE_NAME') or ""
+
+# AWS credentails
+ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID') or ""
+SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY') or ""
+SESSION_TOKEN = os.environ.get('AWS_SESSION_TOKEN') or ""
+
 # Create a connection to the MySQL database
 db_conn = connections.Connection(
     host= DBHOST,
@@ -21,9 +32,9 @@ db_conn = connections.Connection(
     user= DBUSER,
     password= DBPWD, 
     db= DATABASE
-    
 )
 output = {}
+path = ""
 table = 'employee';
 
 # Define the supported color codes
@@ -37,6 +48,12 @@ color_codes = {
     "lime": "#C1FF9C",
 }
 
+# Provide credentials to Boto3
+session = boto3.Session(
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    aws_session_token=SESSION_TOKEN
+)
 
 # Create a string of supported colors
 SUPPORTED_COLORS = ",".join(color_codes.keys())
@@ -44,14 +61,32 @@ SUPPORTED_COLORS = ",".join(color_codes.keys())
 # Generate a random color
 COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lime"])
 
+# Download a file from S3 bucket
+def downloadFile(file_name, bucket):
+    s3 = session.resource('s3')
+    path = f"static/{file_name}"
+    s3.Bucket(bucket).download_file(file_name, path)
+    print("Download:", path)
+    return path
+
+# Generate HTML for background
+def getBackgound(image_path, color):
+    if image_path != "":
+        background = f"background-image: url({image_path}); background-size: cover;"
+    else:
+        background = f"background-color: {color};"
+    return background
+
+# Get HTML for background
+BACKGROUND = getBackgound(downloadFile(FILE, BUCKET), color_codes[COLOR])
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template('addemp.html', color=color_codes[COLOR])
+    return render_template('addemp.html', background=BACKGROUND, group_name=GROUP, slogan=SLOGAN)
 
 @app.route("/about", methods=['GET','POST'])
 def about():
-    return render_template('about.html', color=color_codes[COLOR])
+    return render_template('about.html', background=BACKGROUND, group_name=GROUP, slogan=SLOGAN)
     
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
@@ -75,11 +110,11 @@ def AddEmp():
         cursor.close()
 
     print("all modification done...")
-    return render_template('addempoutput.html', name=emp_name, color=color_codes[COLOR])
+    return render_template('addempoutput.html', name=emp_name, background=BACKGROUND)
 
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
-    return render_template("getemp.html", color=color_codes[COLOR])
+    return render_template("getemp.html", background=BACKGROUND)
 
 
 @app.route("/fetchdata", methods=['GET','POST'])
