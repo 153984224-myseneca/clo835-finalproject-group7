@@ -22,9 +22,14 @@ read -p "Please paste your ECR WEBAPP image url here: " ECR_WEBAPP_IMAGE
 echo "Updating webapp image in the manifest..."
 sed -i "s|image: .*|image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
 
-echo "Creating mysql-root-pass secret..."
-kubectl -n ${NAMESPACE} apply -f mysql_secrets.yaml
 
+echo ""
+echo "Creating mysql-root-pass secret..."
+kubectl -n ${NAMESPACE} create secret generic mysql-secret \
+	  --from-literal="username=root" \
+	  --from-literal="password=pw"
+
+echo ""
 echo "Creating ImagePullSecret..."
 kubectl -n ${NAMESPACE} create secret docker-registry ecr-secret --docker-server=${ECR_SERVER} --docker-username=${ECR_USERNAME} --docker-password=${ECR_PASS}
 
@@ -35,7 +40,7 @@ read -p "Please paste your AWS_ACCESS_KEY_ID here:  " YOUR_ACCESS_KEY_ID
 read -p "Please paste your AWS_SECRET_ACCESS_KEY here: " YOUR_SECRET_ACCESS_KEY
 read -p "Please paste your AWS_SESSION_TOKEN here: " YOUR_SESSION_TOKEN
 
-# Create the Kubernetes secret
+
 kubectl -n ${NAMESPACE} create secret generic aws-secret \
     --from-literal=aws_access_key_id="$AWS_ACCESS_KEY_ID" \
     --from-literal=aws_secret_access_key="$AWS_SECRET_ACCESS_KEY" \
