@@ -3,8 +3,7 @@ kind: ConfigMap
 metadata:
   name: app-config
 data:
-  background_image_url: "https://github.com/111559225-myseneca/CAA900-Azure-Project/blob/main/Checkpoint2/images/parta_log_snapshot.png"
   group_name: "Group7"
   slogan: "Empowering Excellence Together"
-  bucket_name: <s3 bucket name>
-  file_name: <backgound image file name>
+  bucket_name: "appbackgroundimage"
+  file_name: "background.jpg"
