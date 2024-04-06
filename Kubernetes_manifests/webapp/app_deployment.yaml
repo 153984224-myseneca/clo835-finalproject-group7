@@ -19,11 +19,6 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: BACKGROUND_IMAGE_URL
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: background_image_url
         - name: GROUP_NAME
           valueFrom:
             configMapKeyRef:
