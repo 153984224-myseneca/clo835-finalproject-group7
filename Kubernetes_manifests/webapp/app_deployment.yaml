@@ -34,6 +34,16 @@ spec:
             configMapKeyRef:
               name: app-config
               key: slogan
+        - name: BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: bucket_name
+        - name: FILE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: file_name
         - name: DBHOST
           value: "mysql-service"
         - name: DBPORT
@@ -50,6 +60,20 @@ spec:
               key: password
         - name: DATABASE
           value: "employees"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: aws_access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: aws_secret_access_key
+        - name: AWS_SESSION_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: aws_session_token
       imagePullSecrets:
       - name: ecr-secret
-
