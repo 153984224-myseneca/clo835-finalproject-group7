@@ -34,7 +34,6 @@ db_conn = connections.Connection(
     db= DATABASE
 )
 output = {}
-path = ""
 table = 'employee';
 
 # Define the supported color codes
@@ -48,12 +47,6 @@ color_codes = {
     "lime": "#C1FF9C",
 }
 
-# Provide credentials to Boto3
-session = boto3.Session(
-    aws_access_key_id=ACCESS_KEY,
-    aws_secret_access_key=SECRET_KEY,
-    aws_session_token=SESSION_TOKEN
-)
 
 # Create a string of supported colors
 SUPPORTED_COLORS = ",".join(color_codes.keys())
@@ -61,24 +54,51 @@ SUPPORTED_COLORS = ",".join(color_codes.keys())
 # Generate a random color
 COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lime"])
 
+# Generate HTML for background
+# def getBackgound(image_path, color):
+#     if image_path != "":
+#         background = f"background-image: url({image_path}); background-size: cover;"
+#     else:
+#         background = f"background-color: {color};"
+#     return background
+
+def checkFileExists(filepath):
+    if os.path.exists(filepath):
+        return True
+    else:
+        return False
+
+def getBackground():
+    path = f"static/background.jpg"
+    color = color_codes[COLOR]
+    # Check local background image exsits 
+    if checkFileExists(path):
+        return f"background-image: url({path}); background-size: cover;"
+    else:
+        if FILE != "" and BUCKET != "":
+            # Look up the s3 to get a backgound image and download it
+            path = downloadFile(FILE, BUCKET)
+            if path != "":
+                return f"background-image: url({path}); background-size: cover;"
+        return f"background-color: {color};"
+
 # Download a file from S3 bucket
 def downloadFile(file_name, bucket):
-    s3 = session.resource('s3')
-    path = f"static/{file_name}"
-    s3.Bucket(bucket).download_file(file_name, path)
-    print("Download:", path)
-    return path
-
-# Generate HTML for background
-def getBackgound(image_path, color):
-    if image_path != "":
-        background = f"background-image: url({image_path}); background-size: cover;"
-    else:
-        background = f"background-color: {color};"
-    return background
-
-# Get HTML for background
-BACKGROUND = getBackgound(downloadFile(FILE, BUCKET), color_codes[COLOR])
+    if ACCESS_KEY != "" and SECRET_KEY != "" and SESSION_TOKEN != "":
+        # Provide credentials to Boto3
+        session = boto3.Session(
+            aws_access_key_id=ACCESS_KEY,
+            aws_secret_access_key=SECRET_KEY,
+            aws_session_token=SESSION_TOKEN
+        )
+        s3 = session.resource('s3')
+        path = f"static/{file_name}"
+        # Download filie into path
+        s3.Bucket(bucket).download_file(file_name, path)
+        print("downloaded image location in s3:", f"{bucket}/static/{file_name}")
+        return path
+    
+BACKGROUND = getBackground()
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
