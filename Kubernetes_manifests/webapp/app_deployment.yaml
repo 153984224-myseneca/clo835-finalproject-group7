@@ -16,39 +16,15 @@ spec:
       containers:
       - name: group7-webapp
         image: 128140924817.dkr.ecr.us-east-1.amazonaws.com/project:web_app
-        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
-        - name: GROUP_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: group_name
-        - name: SLOGAN
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: slogan
-        - name: BUCKET_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: bucket_name
-        - name: FILE_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: file_name
-        - name: IMAGE_PATH
-          valueFrom:
-            configMapKeyRef:
-              name: app-config
-              key: image_path
         - name: DBHOST
           value: "mysql-service"
         - name: DBPORT
           value: "3306"
+        - name: DATABASE
+          value: "employees"
         - name: DBUSER
           valueFrom:
             secretKeyRef:
@@ -59,22 +35,26 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: password
-        - name: DATABASE
-          value: "employees"
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: aws-secret
-              key: aws_access_key_id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-secret
-              key: aws_secret_access_key
-        - name: AWS_SESSION_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: aws-secret
-              key: aws_session_token
       imagePullSecrets:
       - name: ecr-secret
+      volumes:
+      - name: image-volume
+        persistentVolumeClaim:
+          claimName: image-pvc
+      initContainers:
+      - name: s3-image-downloader
+        image: amazon/aws-cli
+        command: ["sh", "-c", "aws s3 cp s3://${BUCKET_NAME}/${IMAGE_NAME} /data --region us-east-1"]
+        env:
+        - name: BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: bucket_name
+        - name: IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: image_name
+
+
