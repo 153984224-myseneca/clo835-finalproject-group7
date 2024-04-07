@@ -7,6 +7,19 @@
 read -p "Please input a namespace name: " NAMESPACE 
 kubectl create ns ${NAMESPACE} || echo "Namespace ${NAMESPACE} already exists or failed to create."
 
+echo "Listing available StorageClasses..."
+kubectl get sc
+
+echo ""
+echo "Deploying a new StorageClass for S3 Bucket Background Image..."
+kubectl -n ${NAMESPACE} apply -f image_storageclass.yaml
+echo "Updated StorageClasses:"
+kubectl get sc
+
+echo ""
+echo "Creating a PVC for S3 Bucket Background Image..."
+kubectl -n ${NAMESPACE} apply -f image_pvc.yaml
+
 
 echo ""
 echo "Getting ECR credential..."
@@ -18,9 +31,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-read -p "Please paste your ECR WEBAPP image url here: " ECR_WEBAPP_IMAGE
-echo "Updating webapp image in the manifest..."
-sed -i "s|image: .*|image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
+read -p "Please paste your Webapp image URL for the here: " ECR_WEBAPP_IMAGE
+echo "Updating Webapp image in the maifest..."
+sed -i "s|^ *image: .*group7-webapp.*$|        image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
 
 
 echo ""
@@ -51,7 +64,14 @@ kubectl -n ${NAMESPACE} get secret
 
 
 echo ""
-echo "Creating configMap for APP deployment..."
+read -p "Please input your S3 Image bucket name: " S3_BUCKET_NAME
+read -p "Please input the image name: " IMAGE_NAME
+
+echo ""
+echo "Creating configMap for WEBAPP deployment..."
+sed -i "s|bucket_name:.*|bucket_name: \"$S3_BUCKET_NAME\"|" app_configmap.yaml
+sed -i "s|image_name:.*|image_name: \"$IMAGE_NAME\"|" app_configmap.yaml
+
 kubectl -n ${NAMESPACE} apply -f app_configmap.yaml
 
 echo ""
