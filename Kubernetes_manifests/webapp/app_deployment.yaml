@@ -15,7 +15,7 @@ spec:
       serviceAccountName: clo835
       containers:
       - name: group7-webapp
-        image: 128140924817.dkr.ecr.us-east-1.amazonaws.com/project:web_app
+        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240330142750
         ports:
         - containerPort: 8080
         env:
@@ -43,7 +43,7 @@ spec:
           claimName: image-pvc
       initContainers:
       - name: s3-image-downloader
-        image: amazon/aws-cli
+        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240330142750
         command: ["sh", "-c", "aws s3 cp s3://${BUCKET_NAME}/${IMAGE_NAME} /data --region us-east-1"]
         env:
         - name: BUCKET_NAME

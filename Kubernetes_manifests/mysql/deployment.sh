@@ -18,7 +18,8 @@ kubectl get sc
 
 echo ""
 echo "Getting ECR credential..."
-read -p "Please paste your ECR server address here: " ECR_SERVER
+read -p "Please paste your ECR MySQL image url here: " ECR_MYSQL_IMAGE
+ECR_SERVER=$(echo $ECR_MYSQL_IMAGE | awk -F'/' '{print $1}') 
 ECR_USERNAME="AWS"
 ECR_PASS=$(aws ecr get-login-password --region us-east-1)
 if [ $? -ne 0 ]; then
@@ -26,7 +27,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-read -p "Please paste your ECR MySQL image url here: " ECR_MYSQL_IMAGE
+#read -p "Please paste your ECR MySQL image url here: " ECR_MYSQL_IMAGE
 echo "Updating mysql image in the manifest..."
 sed -i "s|image: .*|image: ${ECR_MYSQL_IMAGE}|" mysql_deployment.yaml
 

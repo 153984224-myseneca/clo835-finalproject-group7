@@ -7,49 +7,39 @@
 read -p "Please input a namespace name: " NAMESPACE 
 kubectl create ns ${NAMESPACE} || echo "Namespace ${NAMESPACE} already exists or failed to create."
 
-echo "Listing available StorageClasses..."
-kubectl get sc
+# echo "Listing available StorageClasses..."
+# kubectl get sc
 
-echo ""
-echo "Deploying a new StorageClass for S3 Bucket Background Image..."
-kubectl -n ${NAMESPACE} apply -f image_storageclass.yaml
-echo "Updated StorageClasses:"
-kubectl get sc
+# echo ""
+# echo "Deploying a new StorageClass for S3 Bucket Background Image..."
+# kubectl -n ${NAMESPACE} apply -f image_storageclass.yaml
+# echo "Updated StorageClasses:"
+# kubectl get sc
 
 echo ""
 echo "Creating a PVC for S3 Bucket Background Image..."
 kubectl -n ${NAMESPACE} apply -f image_pvc.yaml
 
 
-echo ""
-echo "Getting ECR credential..."
-read -p "Please paste your ECR server address here: " ECR_SERVER
-ECR_USERNAME="AWS"
-ECR_PASS=$(aws ecr get-login-password --region us-east-1)
-if [ $? -ne 0 ]; then
-    echo "Failed to obtain ECR password. Ensure AWS CLI is configured correctly."
-    exit 1
-fi
-
 read -p "Please paste your Webapp image URL for the here: " ECR_WEBAPP_IMAGE
 echo "Updating Webapp image in the maifest..."
-sed -i "s|^ *image: .*group7-webapp.*$|        image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
+sed -i "s|image: .*|image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
 
 
-echo ""
-echo "Creating mysql-root-pass secret..."
-kubectl -n ${NAMESPACE} create secret generic mysql-secret \
-	  --from-literal="username=root" \
-	  --from-literal="password=pw"
+# echo ""
+# echo "Creating mysql-root-pass secret..."
+# kubectl -n ${NAMESPACE} create secret generic mysql-secret \
+# 	  --from-literal="username=root" \
+# 	  --from-literal="password=pw"
 
-echo ""
-echo "Creating ImagePullSecret..."
-kubectl -n ${NAMESPACE} create secret docker-registry ecr-secret --docker-server=${ECR_SERVER} --docker-username=${ECR_USERNAME} --docker-password=${ECR_PASS}
+# echo ""
+# echo "Creating ImagePullSecret..."
+# kubectl -n ${NAMESPACE} create secret docker-registry ecr-secret --docker-server=${ECR_SERVER} --docker-username=${ECR_USERNAME} --docker-password=${ECR_PASS}
 
 
 echo ""
 echo "Set your AWS credentials for S3 Bucket"
-read -p "Please paste your AWS_ACCESS_KEY_ID here:  " YOUR_ACCESS_KEY_ID
+read -p "Please paste your AWS_ACCESS_KEY_ID here: " YOUR_ACCESS_KEY_ID
 read -p "Please paste your AWS_SECRET_ACCESS_KEY here: " YOUR_SECRET_ACCESS_KEY
 read -p "Please paste your AWS_SESSION_TOKEN here: " YOUR_SESSION_TOKEN
 

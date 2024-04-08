@@ -5,6 +5,6 @@ metadata:
 data:
   group_name: "Group7"
   slogan: "Empowering Excellence Together"
-  bucket_name: "appbackgroundimage"
+  bucket_name: "clo835-finalproject-group7"
   image_name: "background.jpg"
   image_path: "static/background.jpg"
