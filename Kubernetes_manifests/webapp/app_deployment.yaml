@@ -43,7 +43,7 @@ spec:
           claimName: image-pvc
       initContainers:
       - name: s3-image-downloader
-        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240330142750
+        image: amazon/aws-cli
         command: ["sh", "-c", "aws s3 cp s3://${BUCKET_NAME}/${IMAGE_NAME} /data --region us-east-1"]
         env:
         - name: BUCKET_NAME
