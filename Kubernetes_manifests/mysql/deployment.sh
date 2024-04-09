@@ -32,8 +32,13 @@ echo "Updating mysql image in the manifest..."
 sed -i "s|image: .*|image: ${ECR_MYSQL_IMAGE}|" mysql_deployment.yaml
 
 echo "Creating mysql-root-pass secret..."
+echo "Please input the db credential: "
+read "Please enter the db username: " DBUSER
 read "Please enter the db password: " DBPASSWD
-kubectl -n ${NAMESPACE} create secret generic mysql-root-pass --from-literal=password='"${DBPASSWD}"'
+kubectl -n ${NAMESPACE} create secret generic mysql-secret \
+	  --from-literal="username="${DBUSER}"" \
+	  --from-literal="password="${DBPASSWD}""
+
 
 echo "Creating ImagePullSecret..."
 kubectl -n ${NAMESPACE} create secret docker-registry ecr-secret --docker-server=${ECR_SERVER} --docker-username=${ECR_USERNAME} --docker-password=${ECR_PASS}
