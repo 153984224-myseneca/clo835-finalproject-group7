@@ -23,7 +23,8 @@ kubectl -n ${NAMESPACE} apply -f image_pvc.yaml
 
 read -p "Please paste your Webapp image URL for the here: " ECR_WEBAPP_IMAGE
 echo "Updating Webapp image in the maifest..."
-sed -i "s|image: .*|image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
+sed -i '/- name: group7-webapp/,/- name:/{s|image:.*|image: '"${ECR_WEBAPP_IMAGE}"'|}' app_deployment.yaml
+#sed -i "s|image: .*|image: ${ECR_WEBAPP_IMAGE}|" app_deployment.yaml
 
 
 # echo ""

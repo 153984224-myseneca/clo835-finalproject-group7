@@ -15,7 +15,7 @@ spec:
       serviceAccountName: clo835
       containers:
       - name: group7-webapp
-        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240330142750
+        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240410234341
         ports:
         - containerPort: 8080
         env:

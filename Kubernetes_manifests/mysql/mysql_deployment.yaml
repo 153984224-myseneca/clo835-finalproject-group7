@@ -15,12 +15,12 @@ spec:
       serviceAccountName: clo835
       containers:
       - name: mysql
-        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:mysql-20240410233514
+        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:mysql-20240410234317
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-root-pass
+              name: mysql-secret
               key: password
         ports:
         - containerPort: 3306
