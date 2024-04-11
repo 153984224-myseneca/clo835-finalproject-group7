@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: group7-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: group7-app
+  template:
+    metadata:
+      labels:
+        app: group7-app
+    spec:
+      serviceAccountName: clo835
+      containers:
+      - name: group7-webapp
+        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240410234341
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DBHOST
+          value: "mysql-service"
+        - name: DBPORT
+          value: "3306"
+        - name: DATABASE
+          value: "employees"
+        - name: DBUSER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: username
+        - name: DBPWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+      imagePullSecrets:
+      - name: ecr-secret
+      volumes:
+      - name: image-volume
+        persistentVolumeClaim:
+          claimName: image-pvc
+      initContainers:
+      - name: s3-image-downloader
+        image: amazon/aws-cli
+        command: ["sh", "-c", "aws s3 cp s3://${BUCKET_NAME}/${IMAGE_NAME} /data --region us-east-1"]
+        env:
+        - name: BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: bucket_name
+        - name: IMAGE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: image_name
+
+

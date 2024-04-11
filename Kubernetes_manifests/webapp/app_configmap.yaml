@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  group_name: "Group7"
+  slogan: "Empowering Excellence Together"
+  bucket_name: "clo835-project-zhiweizeng"
+  image_name: "background.jpg"
+  image_path: "static/background.jpg"
