@@ -56,7 +56,7 @@ jobs:
         docker ps
         echo "Pause for 10 seconds to let container start"
         sleep 10
-        docker exec mysql mysql -ppw -e "show databases;"
+        docker exec mysql mysql -p$BD_PASSWORD -e "show databases;"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
         
     - name: Build, test, tag, and push WebAPP image to Amazon ECR
