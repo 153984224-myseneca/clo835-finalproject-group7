@@ -46,7 +46,6 @@ jobs:
         # Generate IMAGE_TAG using current date and time
         IMAGE_TAG=mysql-$(date +"%Y%m%d%H%M%S")
         echo "IMAGE_TAG: $IMAGE_TAG"
-        echo $BD_PASSWORD
 
         ls -ltra
         # Docker build for mysql server
@@ -55,7 +54,6 @@ jobs:
         docker run -d --name mysql -e MYSQL_ROOT_PASSWORD="${BD_PASSWORD}" -d $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
         docker ps
         echo "Pause for 10 seconds to let container start"
-        echo $BD_PASSWORD
         sleep 10
         docker exec mysql mysql -p"${BD_PASSWORD}" -e "show databases;"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
@@ -83,7 +81,6 @@ jobs:
         export DATABASE=employees
         export DBPWD=$BD_PASSWORD
         export APP_COLOR=blue
-        echo $DBPWD
         docker run -p 8080:8080  -e DBHOST=$DBHOST -e DBPORT=$DBPORT -e  DBUSER=$DBUSER -e DBPWD=$DBPWD -e DATABASE=$DATABASE -d $ECR_REGISTRY/$ECR_REPOSITORY:"${IMAGE_TAG}"
         docker ps
         echo "Pause for 10 seconds to let container start"

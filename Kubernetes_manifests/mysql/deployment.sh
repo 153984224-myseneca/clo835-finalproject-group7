@@ -33,8 +33,8 @@ sed -i "s|image: .*|image: ${ECR_MYSQL_IMAGE}|" mysql_deployment.yaml
 
 echo "Creating mysql-root-pass secret..."
 echo "Please input the db credential: "
-read "Please enter the db username: " DBUSER
-read "Please enter the db password: " DBPASSWD
+read -p "Please enter the db username: " DBUSER
+read -p "Please enter the db password: " DBPASSWD
 kubectl -n ${NAMESPACE} create secret generic mysql-secret \
 	  --from-literal="username="${DBUSER}"" \
 	  --from-literal="password="${DBPASSWD}""
