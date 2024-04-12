@@ -15,7 +15,7 @@ spec:
       serviceAccountName: clo835
       containers:
       - name: group7-webapp
-        image: 481454206029.dkr.ecr.us-east-1.amazonaws.com/clo835-project-ecr:WebAPP-20240410234341
+        image: 128140924817.dkr.ecr.us-east-1.amazonaws.com/project:web_app
         ports:
         - containerPort: 8080
         env:
@@ -35,12 +35,26 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: password
+        - name: GROUP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: group_name
+        - name: SLOGAN
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: slogan
+        - name: IMAGE_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: image_path
+        volumeMounts:
+        - name: shared-data
+          mountPath: /app/static
       imagePullSecrets:
       - name: ecr-secret
-      volumes:
-      - name: image-volume
-        persistentVolumeClaim:
-          claimName: image-pvc
       initContainers:
       - name: s3-image-downloader
         image: amazon/aws-cli
@@ -56,5 +70,9 @@ spec:
             configMapKeyRef:
               name: app-config
               key: image_name
-
-
+        volumeMounts:
+        - name: shared-data
+          mountPath: /data
+      volumes:
+      - name: shared-data
+        emptyDir: {}
