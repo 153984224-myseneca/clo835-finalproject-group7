@@ -16,6 +16,7 @@ kubectl get roles -n ${NAMESPACE}
 
 echo ""
 echo "Creating RoleBinding 'clo835-role-binding' to binds role to erviceaccount...."
+sed -i "s|namespace: .*|namespace: ${NAMESPACE}|" role_binding.yaml
 kubectl apply -f role_binding.yaml -n ${NAMESPACE}
 kubectl get rolebindings -n ${NAMESPACE}
 
