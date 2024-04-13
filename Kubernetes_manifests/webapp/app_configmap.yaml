@@ -7,3 +7,4 @@ data:
   slogan: "Empowering Excellence Together"
   bucket_name: "appbackgroundimage"
   image_path: "static/background.jpg"
+  image_name: "background.jpg"
