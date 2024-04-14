@@ -7,6 +7,7 @@ import boto3
 
 app = Flask(__name__)
 
+# DB
 DBHOST = os.environ.get("DBHOST") or "localhost"
 DBUSER = os.environ.get("DBUSER") or "root"
 DBPWD = os.environ.get("DBPWD") or "passwors"
@@ -14,9 +15,11 @@ DATABASE = os.environ.get("DATABASE") or "employees"
 COLOR_FROM_ENV = os.environ.get('APP_COLOR') or "lime"
 DBPORT = int(os.environ.get("DBPORT"))
 
+# Group information
 GROUP = os.environ.get('GROUP_NAME') or ""
 SLOGAN = os.environ.get('SLOGAN') or ""
-IMAGEURL = os.environ.get('BACKGROUND_IMAGE_URL') or ""
+
+# S3
 BUCKET = os.environ.get('BUCKET_NAME') or ""
 FILE = os.environ.get('FILE_NAME') or ""
 IMAGE_PATH = os.environ.get('IMAGE_PATH') or ""
@@ -48,30 +51,32 @@ color_codes = {
     "lime": "#C1FF9C",
 }
 
-
 # Create a string of supported colors
 SUPPORTED_COLORS = ",".join(color_codes.keys())
 
 # Generate a random color
 COLOR = random.choice(["red", "green", "blue", "blue2", "darkblue", "pink", "lime"])
+color = color_codes[COLOR]
 
+# Check if a file exists in local
 def checkFileExists(filepath):
     if os.path.exists(filepath):
         return True
     else:
         return False
 
+# Get a backgound from local
 def getBackground():
     if IMAGE_PATH != "":
-        print(IMAGE_PATH)
         if checkFileExists(IMAGE_PATH):
             return f"background-image: url({IMAGE_PATH}); background-size: cover;"
-        else:
-            color = color_codes[COLOR]
-            return f"background-color: {color};"
-    
+
+    return f"background-color: {color};"
+
+# Get a backgound from S3
+def getBackgroundFromS3():
     path = f"static/background.jpg"
-    # Check local background image exsits 
+    # Check local background image exists 
     if checkFileExists(path):
         return f"background-image: url({path}); background-size: cover;"
     else:
@@ -163,7 +168,7 @@ def FetchData():
         cursor.close()
 
     return render_template("getempoutput.html", id=output["emp_id"], fname=output["first_name"],
-                           lname=output["last_name"], interest=output["primary_skills"], location=output["location"], color=color_codes[COLOR])
+                           lname=output["last_name"], interest=output["primary_skills"], location=output["location"], background=BACKGROUND)
 
 if __name__ == '__main__':
     
